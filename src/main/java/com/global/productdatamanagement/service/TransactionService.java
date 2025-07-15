@@ -5,7 +5,6 @@ import com.eon.springbootdatamanagement.payload.request.StatusUpdateRequest;
 import com.eon.springbootdatamanagement.payload.response.GlobalResponse;
 import com.global.productdatamanagement.payload.request.TransactionCreateUpdateRequest;
 import com.global.productdatamanagement.payload.request.TransactionDataRequest;
-import org.springframework.stereotype.Service;
 
 public interface TransactionService {
     GlobalResponse createTransaction(TransactionCreateUpdateRequest transactionCreateUpdateRequest) throws GlobalException;

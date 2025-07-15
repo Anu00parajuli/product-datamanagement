@@ -7,7 +7,9 @@ import org.springframework.context.annotation.ComponentScan;
 @SpringBootApplication
 @ComponentScan(basePackages = {
         "com.global.productdatamanagement",  // your current app
-        "com.eon.springbootdatamanagement"   // external JAR package
+        "com.eon.springbootdatamanagement.configuration",
+        "com.eon.springbootdatamanagement.util"
+        // external JAR package
 })
 public class ProductDatamanagementApplication {
 

@@ -61,9 +61,15 @@ public class TransactionServiceImpl implements TransactionService {
             throw new GlobalException("TRA002", HttpStatus.UNPROCESSABLE_ENTITY);
         }
         TransactionEntity transactionEntity = transactionRepository.findTransactionEntityById(id);
-        transactionEntity.setCustomerName(transactionCreateUpdateRequest.getCustomerName());
-        transactionEntity.setBeneficiaryName(transactionCreateUpdateRequest.getBeneficiaryName());
-        transactionEntity.setAmount(transactionCreateUpdateRequest.getAmount());
+        if (transactionCreateUpdateRequest.getCustomerName() != null) {
+            transactionEntity.setCustomerName(transactionCreateUpdateRequest.getCustomerName());
+        }
+        if (transactionCreateUpdateRequest.getBeneficiaryName() != null) {
+            transactionEntity.setBeneficiaryName(transactionCreateUpdateRequest.getBeneficiaryName());
+        }
+        if (transactionCreateUpdateRequest.getAmount() < 0.0) {
+            transactionEntity.setAmount(transactionCreateUpdateRequest.getAmount());
+        }
         transactionRepository.save(transactionEntity);
         return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.update.success", null, LocaleContextHolder.getLocale()));
     }
@@ -75,7 +81,7 @@ public class TransactionServiceImpl implements TransactionService {
         }
         TransactionEntity transactionEntity = transactionRepository.findTransactionEntityById(id);
         TransactionResponse transactionResponse = createTransactionResponse(transactionEntity);
-        return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), transactionResponse);
+        return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.update.success", null, LocaleContextHolder.getLocale()), transactionResponse);
     }
 
     @Override
@@ -85,15 +91,15 @@ public class TransactionServiceImpl implements TransactionService {
         }
         TransactionEntity transactionEntity = transactionRepository.findTransactionEntityById(id);
         TransactionResponse transactionResponse = createTransactionResponse(transactionEntity);
-        return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), transactionResponse);
+        return ServiceResponseBuilder.buildSuccessResponseWithMessage(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), transactionResponse);
 
     }
 
     @Override
     public GlobalResponse getAllTransaction() throws GlobalException {
         List<TransactionEntity> transactionEntities = transactionRepository.findAll();
-        List<TransactionResponse> transactionResponseList = transactionEntities.stream().map(transactionEntity -> createTransactionResponse(transactionEntity)).toList();
-        return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), transactionResponseList);
+        List<TransactionResponse> transactionResponseList = transactionEntities.stream().map(this::createTransactionResponse).toList();
+        return ServiceResponseBuilder.buildSuccessResponseWithMessage(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), transactionResponseList);
     }
 
     @Override
@@ -106,8 +112,7 @@ public class TransactionServiceImpl implements TransactionService {
                 .result(transactionResponseList)
                 .totalElementCount(transactionEntityPage.getTotalElements())
                 .build();
-        return ServiceResponseBuilder.buildSuccessResponse(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), dataPaginationResponse);
-
+        return ServiceResponseBuilder.buildSuccessResponseWithMessage(messageSource.getMessage("transaction.fetch.success", null, LocaleContextHolder.getLocale()), dataPaginationResponse);
     }
 
     private TransactionResponse createTransactionResponse(TransactionEntity transactionEntity) {

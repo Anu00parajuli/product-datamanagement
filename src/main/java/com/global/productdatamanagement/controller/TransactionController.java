@@ -11,7 +11,6 @@ import com.global.productdatamanagement.service.TransactionService;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.servlet.i18n.AcceptHeaderLocaleResolver;
 
 @TransactionRestController
 public class TransactionController {
